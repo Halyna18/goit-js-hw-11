@@ -1,48 +1,26 @@
+// Описаний у документації
 import SimpleLightbox from 'simplelightbox';
+// Додатковий імпорт стилів
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
-let lightbox;
-
-export function renderImages(images) {
-  const gallery = document.getElementById('gallery');
-  gallery.innerHTML = images
+export function createImages(data) {
+  const lightbox = new SimpleLightbox('.gallery-list a', {
+    captions: true,
+    captionsData: 'alt',
+    captionDelay: 250,
+  });
+  const list = document.querySelector('.gallery-list');
+  let images = data.hits
     .map(
-      image => `
-      <div class="image-container">
-    <a href="${image.largeImageURL} class="gallery-item"">
-      <img src="${image.webformatURL}" alt="${image.tags}" />
-      <div class="info">
-        <div><p>Likes:</p> ${image.likes}</div>
-        <div><p>Views:</p> ${image.views}</div>
-        <div><p>Comments:</p> ${image.comments}</div>
-        <div><p>Downloads:</p> ${image.downloads}</div>
-      </div>
-    </a>
-    </div>
-  `
+      hit =>
+        `<div class="image-frame"><a href="${hit.largeImageURL}"><img class="image" src="${hit.webformatURL}" alt="${hit.tags}" /></a><div class ="text-wraper"><div class="text-block"><h5>likes</h5><p>${hit.likes}</p></div><div class="text-block"><h5>views</h5><p>${hit.views}</p></div><div class="text-block"><h5>comments</h5><p>${hit.comments}</p></div><div class="text-block"><h5>downloads</h5><p>${hit.downloads}</p></div></div></div>`
     )
     .join('');
-
-  if (lightbox) {
-    lightbox.refresh();
-  } else {
-    lightbox = new SimpleLightbox('.gallery a', {
-      captions: true,
-      captionsData: 'alt',
-      captionDelay: 250,
-    });
-    lightbox.refresh();
-  }
+  list.insertAdjacentHTML('afterbegin', images);
+  lightbox.refresh();
 }
 
-export function clearGallery() {
-  document.getElementById('gallery').innerHTML = '';
-}
-
-export function showLoader() {
-  document.getElementById('loader').style.display = 'block';
-}
-
-export function hideLoader() {
-  document.getElementById('loader').style.display = 'none';
+export function clearImages() {
+  const list = document.querySelector('.gallery-list');
+  list.innerHTML = '';
 }
